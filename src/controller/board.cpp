@@ -69,7 +69,7 @@ void Board::showReferee() {
             listReferee("words_count DESC");
             showReferee();
             break;
-        case '1':
+        case '2':
             listReferee("level DESC");
             showReferee();
             break;

@@ -6,12 +6,13 @@
 
 #include <QDebug>
 #include <QString>
+#include <QFile>
+#include <QStringList>
 
 using namespace Console;
 
 void App::start() {
     cls();
-    //TODO: made it more fancy
     print("Welcome To Words Game\n\n", RED);
 
     bool quit = false;
@@ -19,15 +20,16 @@ void App::start() {
     while(true) {
         cls();
 
-        printCenter("Words Game By LCJ", 1, BLUE);
+        printCenter("Words Game ver.2 By LCJ", 1, BLUE);
         print("Please select your ", 4, 4);
         print("ACTION: ", RED);
 
         print("1. Register", 4, 5);
         print("2. Login", 4, 6);
-        print("Q. Quit", 4, 7);
+        print("3. Import Question", 4, 7);
+        print("Q. Quit", 4, 8);
 
-        locateCursor(4, 8);
+        locateCursor(4, 9);
 
         switch (getch()) {
             case '1':
@@ -35,6 +37,9 @@ void App::start() {
                 break;
             case '2':
                 loginController();
+                break;
+            case '3':
+                importController();
                 break;
             case 'q':
                 quit = true;
@@ -75,7 +80,6 @@ void App::registerController() {
             break;
     }
 
-    User * user;
     if (User::reg(username, password, type)) {
         cls();
         printCenter("Register Success", 12, GREEN);
@@ -159,8 +163,12 @@ void App::addWordController() {
     print("Word: ", 4, 4); scin>>word;
     print("Level: ", 4, 6); scin>>level;
 
-    referee->addQuestion(word, level);
+    if (!referee->addQuestion(word, level)) {
+        cls();
+        warn("Word Already Exists!!!");
+    };
 
+    cls();
     print("Please select your ", 4, 4);
     print("ACTION: ", RED);
     print("1. Add a word again", 4, 5);
@@ -218,4 +226,37 @@ void App::playerController() {
         default:
             playerController();
     }
+}
+
+
+void App::importController() {
+    cls();
+
+    printCenter("Please input your CSV path:", 2, BLACK);
+
+    locateCursor(0, 4);
+    print(" :");
+
+    QString fileName;
+    scin >> fileName;
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        warn("File Not Exist!!!!!");
+    }
+
+    QString word, level;
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        word = line.split(',').at(0);
+        level = line.split(',').at(1);
+
+        if (!Question::addQuestion(word, level.toInt(), 0)) {
+            print(word + " already exists!\n");
+        }
+    }
+
+    print("Import Finished!\n", RED);
+    waitKey();
+    
 }

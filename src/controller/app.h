@@ -28,6 +28,8 @@ private:
     // 答题者主循环
     void playerController();
 
+    void importController();
+
     Game *game;
     Board *board = new Board;
 };

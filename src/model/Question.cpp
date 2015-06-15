@@ -32,3 +32,12 @@ vector<Question> Question::getAllQuestion() {
 vector<Question> Question::findQuestionByUser(int userId) {
     return findByField("userId", QString::number(userId));
 }
+
+bool Question::addQuestion(QString word, int level, int userId) {
+    if (findByField("word", word).size()) {
+        return false;
+    }
+
+    Question *question = new Question(word, level, userId);
+    return true;
+}

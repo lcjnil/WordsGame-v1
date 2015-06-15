@@ -17,10 +17,11 @@ private:
     vector<Question> list;
     //关卡需要的次数
     int size = 5;
-    int ms = 3000;
+    int stage_time = 3000;
 
     void initQuestion();
     bool answerQuestion(int i);
+    int getExp(int time);
 
     //Helper method
     void printInfo();

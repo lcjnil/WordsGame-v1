@@ -103,6 +103,12 @@ namespace Console {
     static char nb_getch() {
         return rlutil::nb_getch();
     }
+
+    static void warn(QString text) {
+        printCenter(text, 10, RED);
+        printCenter("Press any key to continue", 13, BLACK);
+        waitKey();
+    }
 }
 
 #endif //CONSOLE_H

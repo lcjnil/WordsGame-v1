@@ -29,6 +29,7 @@ public:
     static vector<Question> getAllQuestion();
 
     static vector<Question> findQuestionByUser(int userId);
+    static bool addQuestion(QString word, int level, int userId);
 };
 
 

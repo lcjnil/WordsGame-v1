@@ -14,6 +14,9 @@ public:
     }
 
     bool addQuestion(QString word, int level);
+
+private:
+    static int MAXEXP;
 };
 
 

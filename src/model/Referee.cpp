@@ -10,7 +10,7 @@ bool Referee::addQuestion(QString word, int level) {
     int cnt = get("words_count").toInt() + 1;
     set("words_count", QString::number(cnt));
     int lv = get("level").toInt() + level;
-    set("lv", QString::number(lv));
+    set("level", QString::number(lv));
     update();
     return true;
 }

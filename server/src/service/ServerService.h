@@ -24,9 +24,13 @@ public:
     ServerService(QObject *parent = 0): QObject(parent) {};
     void start();
     void send(QJsonObject json, qintptr id);
+    bool addToRoom(int roomId, qintptr id);
+    bool removeFromRoom(qintptr id);
+    void multicast(int roomId, QJsonObject data);
 
 signals:
     void receiveJSON(QJsonObject json, qintptr id);
+    void addRoom(int roomId, int size);
 
 private:
     //singleton
@@ -35,6 +39,10 @@ private:
 
     QTcpServer *server;
     QList<QTcpSocket* > sockets;
+
+    QMap<int, QList<qintptr> > room;
+    QMap<int, int > roomLevel;
+    QMap<qintptr, int> roomNumber;
 
     QTcpSocket* findSocketById(qintptr id);
 

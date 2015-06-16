@@ -36,6 +36,7 @@ Server::Server(QCoreApplication *app) {
     // initial serverService
     serverService.start();
     connect(&serverService, SIGNAL(receiveJSON(QJsonObject, qintptr)), this, SLOT(responseHandler(QJsonObject, qintptr)));
+    connect(&serverService, SIGNAL(addRoom(int, int)), this, SLOT(addRoom(int, int)));
 }
 
 void Server::responseHandler(QJsonObject json, qintptr id) {
@@ -113,8 +114,20 @@ void Server::loginHandler(QJsonObject data, qintptr id) {
 
 void Server::gameStartHandler(QJsonObject data, qintptr id) {
     int userId = data["userId"].toInt();
+    int roomId = data["room"].toInt();
+
     User user = User::findById(userId);
 
+    if (serverService.addToRoom(roomId, id)) {
+        roomLevel[roomId] += user.getLevel();
+    };
+}
+
+void Server::addRoom(int roomId, int size) {
+    if (size != 2) return;
+
+
+    // Game start!!!!
     vector<Question> list = Question::getAllQuestion();
     std::random_shuffle(list.begin(), list.end(), [](int i){return clock() % i;});
 
@@ -129,15 +142,16 @@ void Server::gameStartHandler(QJsonObject data, qintptr id) {
         });
     }
 
-    int stage_time = 3000 - user.get("level").toInt() * 300;
+    int stage_time = 3000 + roomLevel[roomId]/2 * 300;
     if (stage_time <= 1000) {
         stage_time = 1000;
     }
     message["questions"] = questions;
     message["stage_time"] = stage_time;
 
-    serverService.send(message, id);
+    serverService.multicast(roomId, message);
 
+    roomLevel[roomId] = 0; //reset
 }
 
 /*
@@ -154,6 +168,8 @@ void Server::gameOverHandler(QJsonObject data, qintptr id) {
     user.set("stage_obtained", data["stage_obtained"].toInt());
 
     user.update();
+
+    serverService.removeFromRoom(id);
 }
 
 

@@ -6,9 +6,10 @@
 #define V3_SERVER_H
 
 #include <QCoreApplication>
-#include <src/model/Connection.h>
+#include <QMap>
 
 #include "../service/ServerService.h"
+#include "../model/Connection.h"
 
 class Server: QObject {
     Q_OBJECT
@@ -17,10 +18,13 @@ public:
 
 private slots:
     void responseHandler(QJsonObject json, qintptr id);
+    void addRoom(int roomId, int size);
 
 private:
     ServerService &serverService = ServerService::getInstance();
     Connection connection;
+
+    QMap<int, int> roomLevel;
 
     const int stage_size = 5;
 

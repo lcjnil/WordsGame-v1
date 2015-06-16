@@ -31,11 +31,14 @@ void ClientService::readData() {
     emit(receiveJSON(jsonDocument.object()));
 }
 
-void ClientService::sendJSON(QJsonObject json) {
+bool ClientService::sendJSON(QJsonObject json) {
     socket->write(QJsonDocument(json).toJson(QJsonDocument::Compact) + "\n");
     socket->waitForBytesWritten();
     if (socket->waitForReadyRead()) {
         readData();
+        return true;
+    } else {
+        return false;
     }
 }
 

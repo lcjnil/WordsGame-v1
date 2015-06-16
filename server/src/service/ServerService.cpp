@@ -13,7 +13,6 @@ void ServerService::start() {
     connect(server, SIGNAL(newConnection()), this, SLOT(addClient()));
 }
 
-
 void ServerService::addClient() {
     QTcpSocket * socket = server->nextPendingConnection();
     sockets.push_back(socket);
@@ -26,6 +25,7 @@ void ServerService::addClient() {
 void ServerService::onDisConnected() {
     QTcpSocket * socket = dynamic_cast<QTcpSocket*>(sender());
     sockets.removeOne(socket);
+    removeFromRoom(socket->socketDescriptor());
 }
 
 void ServerService::readData() {
@@ -48,3 +48,33 @@ QTcpSocket* ServerService::findSocketById(qintptr id) {
         }
     }
 }
+
+bool ServerService::addToRoom(int roomId, qintptr id) {
+    qDebug() << room[roomId].size();
+    switch (room[roomId].size()) {
+        case 0:
+            room[roomId].push_back(id);
+            roomNumber[id] = roomId;
+            emit(addRoom(roomId, 1));
+            break;
+        case 1:
+            room[roomId].push_back(id);
+            roomNumber[id] = roomId;
+            emit(addRoom(roomId, 2));
+        case 2:
+            return false;
+    }
+    return true;
+}
+
+bool ServerService::removeFromRoom(qintptr id) {
+    room[roomNumber[id]].removeAll(id);
+    roomNumber[id] = 0;
+}
+
+void ServerService::multicast(int roomId, QJsonObject data) {
+    for (auto id: room[roomId]) {
+        send(data, id);
+    }
+}
+

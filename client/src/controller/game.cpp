@@ -14,10 +14,25 @@ Game::Game() {
 
 void Game::start(Player *p) {
     player = p;
-    clientService.sendJSON(QJsonObject{
+
+    printInfo();
+
+    printCenter("Welcome to GAME!!!", 2, 4);
+    printCenter("Please input ROOM (Number) :", 4, 4);
+
+    int room;
+    scin >> room;
+
+    bool flag = clientService.sendJSON(QJsonObject{
             {"type", "game_start"},
             {"userId", player->getId()},
+            {"room", room}
     });
+
+    if (!flag) {
+        warn("No one connect to your room!");
+        emit(finish("game"));
+    }
 }
 
 void Game::responseHandler(QJsonObject data) {
@@ -37,12 +52,6 @@ void Game::responseHandler(QJsonObject data) {
 }
 
 void Game::gameStartHandler() {
-    printInfo();
-
-    printCenter("Welcome to GAME!!!", 10, BLACK);
-    printCenter("If you're READY! HIT any key!", 12, BLACK);
-    waitKey();
-
     QTime start = QTime::currentTime(); // 开始时间
 
     bool flag = true; //闯关成功的标识

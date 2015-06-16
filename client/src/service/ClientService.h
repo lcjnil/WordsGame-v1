@@ -20,7 +20,7 @@ public:
     }
     ClientService(QObject *parent) : QObject(parent) {};
     void link(QString ip);
-    void sendJSON(QJsonObject json);
+    bool sendJSON(QJsonObject json);
     void sendJSON(QJsonObject json, bool needResponse);
 
 signals:

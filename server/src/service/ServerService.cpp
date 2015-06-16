@@ -9,7 +9,7 @@
 
 void ServerService::start() {
     server = new QTcpServer(0);
-    server->listen(QHostAddress::LocalHost, 8080);
+    server->listen(QHostAddress("0.0.0.0"), 8080);
     connect(server, SIGNAL(newConnection()), this, SLOT(addClient()));
 }
 

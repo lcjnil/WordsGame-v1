@@ -5,6 +5,8 @@
 #include <QHostAddress>
 #include <QJsonDocument>
 #include <QDebug>
+#include <QAbstractSocket>
+
 #include "ClientService.h"
 
 void ClientService::link(QString ip) {
@@ -16,6 +18,12 @@ void ClientService::link(QString ip) {
 
     connect(socket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(onDisConnected()));
+
+    if(!socket->waitForConnected(5000))
+    {
+        qDebug() << "Error: " << socket->errorString();
+        getchar();
+    }
 }
 
 void ClientService::onConnected() {

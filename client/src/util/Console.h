@@ -10,11 +10,13 @@
 #include <QString>
 #include "rlutil.h"
 
-#define BLACK 0
+#define BLACK 15
 #define BLUE 1
 #define RED 4
 #define GREEN 2
-#define WHITE 15
+#define WHITE 0
+
+
 
 
 namespace Console {

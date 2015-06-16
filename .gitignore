@@ -1,0 +1,43 @@
+# Created by .ignore support plugin (hsz.mobi)
+### C++ template
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+
+
+build-client-Desktop_Qt_5_4_1_clang_64bit-Debug
+build-server-Desktop_Qt_5_4_1_clang_64bit-Debug
+.idea
+
+
+
+**/**/.DS_Store
+
+**/**/*.pro.user
+

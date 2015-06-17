@@ -25,6 +25,8 @@ private:
     Connection connection;
 
     QMap<int, int> roomLevel;
+    QMap<int, QList<qintptr> > roomClients;
+    QMap<int, QList<bool> > roomClientFinished;
 
     const int stage_size = 5;
 

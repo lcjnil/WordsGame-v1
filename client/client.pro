@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     src/model/Player.cpp \
     src/model/Question.cpp \
     src/model/User.cpp \
-    src/controller/board.cpp
+    src/controller/board.cpp \
+    src/util/Console.cpp
 
 HEADERS += \
     src/controller/app.h \

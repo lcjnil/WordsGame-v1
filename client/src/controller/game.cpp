@@ -29,6 +29,9 @@ void Game::start(Player *p) {
             {"room", room}
     });
 
+    cls();
+    printCenter("Wait another player to be connected", 10, RED);
+
     if (!flag) {
         warn("No one connect to your room!");
         emit(finish("game"));
@@ -48,6 +51,8 @@ void Game::responseHandler(QJsonObject data) {
         size = list.size();
         stage_time = data["stage_time"].toInt();
         gameStartHandler();
+    } else if (type == "game_over") {
+        gameOverController(data);
     }
 }
 
@@ -63,41 +68,50 @@ void Game::gameStartHandler() {
     }
 
     QTime stop = QTime::currentTime(); // 结束时间
-    int exp;
+    bool finished = true;
     if (flag) {
-        exp = getExp(start.msecsTo(stop));
+        int exp = getExp(start.msecsTo(stop));
         player->addStage();
+        bool isLevelUp = player->obtainExp(exp);
+
         cls();
         printCenter("Congratulations! You've passed this stage!!", 10, GREEN);
         printCenter("GET EXP" + QString::number(exp), 11, RED);
-        printCenter("Press any key to continue", 13, BLACK);
-        waitKey();
-
-        bool isLevelUp = player->obtainExp(exp);
         if (isLevelUp) {
-            cls();
-            printCenter("Level Up to " + QString::number(player->getLevel()) + " !", 10, GREEN);
-            printCenter("Press any key to continue", 13, BLACK);
+            printCenter("Level Up to " + QString::number(player->getLevel()) + " !", 12, GREEN);
         }
+        printCenter("Wait another player......", 14, BLACK);
 
-        waitKey();
     } else {
-        exp = 0;
+        finished = false;
         cls();
 
         printCenter("Sorry! Have a nice try!", 10, RED);
-        printCenter("Press any key to continue", 12, BLACK);
-
-        waitKey();
+        printCenter("Wait another player......", 12, BLACK);
     }
 
-    clientService.sendJSON(QJsonObject{
+    bool res = clientService.sendJSON(QJsonObject{
             {"type", "game_over"},
             {"userId", player->getId()},
             {"exp", player->getExp()},
             {"level", player->getLevel()},
-            {"stage_obtained", player->getStage()}
-    }, false);
+            {"stage_obtained", player->getStage()},
+            {"finished", finished}
+    });
+
+    if (!res) {
+        info("Something wrong happened...");
+        emit(finish("game"));
+    }
+}
+
+void Game::gameOverController(QJsonObject data) {
+    bool win = data["win"].toBool();
+    if (win) {
+        info("Win!!!!!");
+    } else {
+        warn("Lose!!!!!");
+    }
 
     emit(finish("game"));
 }
@@ -106,15 +120,11 @@ bool Game::answerQuestion(int i) {
     printInfo();
     print("Question ");print("No. ", RED);print(QString::number(i+1), RED);
 
-    QString t(getCols(), '-');
-
-    print(t, 0, 8, BLACK);
-    print(t, 0, 16, BLACK);
 
     Question question = list[i];
     QString word = question.getWord();
 
-    printCenter(word, 12, RED);
+    printCenter(word, 12, BLUE);
     hideCursor();
 
     QTime start = QTime::currentTime();
@@ -134,7 +144,8 @@ bool Game::answerQuestion(int i) {
     }
 
     print(QString(getCols(), ' '), 0, 6);
-    print(QString(getCols(), '_'), 0, 12, RED);
+    print(QString(getCols(), ' '), 0, 12, RED);
+    printCenter(QString(word.length(), '_'), 12, RED);
     locateCenter(word.length(), 12);
     showCursor();
 
@@ -164,6 +175,8 @@ int Game::getExp(int time) {
     for (auto question: list) {
         level += question.getLevel();
     }
+
+    level /= list.size();
 
     if (level + time > 15) {
         return 15;

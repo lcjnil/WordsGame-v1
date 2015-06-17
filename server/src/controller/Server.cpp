@@ -142,7 +142,7 @@ void Server::addRoom(int roomId, int size) {
         });
     }
 
-    int stage_time = 3000 + roomLevel[roomId]/2 * 300;
+    int stage_time = 3000 - roomLevel[roomId]/2 * 300;
     if (stage_time <= 1000) {
         stage_time = 1000;
     }
@@ -169,7 +169,40 @@ void Server::gameOverHandler(QJsonObject data, qintptr id) {
 
     user.update();
 
-    serverService.removeFromRoom(id);
+    QList<qintptr> &clients = roomClients[serverService.getRoom(id)];
+    QList<bool> &finished =  roomClientFinished[serverService.getRoom(id)];
+
+    finished.push_back(data["finished"].toBool());
+    clients.push_back(id);
+
+    if (clients.size() == 2) {
+        bool win1, win2;
+
+        if (finished.at(0)) {
+            win1 = true;
+            win2 = false;
+        } else {
+            win1 = false;
+
+            win2 = finished.at(1);
+        }
+        serverService.send(QJsonObject{
+                {"type", "game_over"},
+                {"win", win1}
+        }, clients.at(0));
+
+
+        serverService.send(QJsonObject{
+                {"type", "game_over"},
+                {"win", win2}
+        }, clients.at(1));
+
+        serverService.removeFromRoom(clients.at(0));
+        serverService.removeFromRoom(clients.at(1));
+
+        clients.clear();
+        finished.clear();
+    }
 }
 
 

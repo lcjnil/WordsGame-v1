@@ -10,115 +10,52 @@
 #include <QString>
 #include "rlutil.h"
 
-#define BLACK 15
-#define BLUE 1
-#define RED 4
-#define GREEN 2
-#define WHITE 0
-
-
-
 
 namespace Console {
 
+    const int BLACK = 15;
+    const int BLUE = 1;
+    const int RED = 4;
+    const int GREEN = 2;
+    const int WHITE = 0;
+
     static QTextStream scin(stdin);
 
-    static int getCols() {
-        return rlutil::tcols();
-    }
+    int getCols();
 
-    static int getRows() {
-        return rlutil::trows();
-    }
+    int getRows();
 
-    static void print(QString str) {
-        rlutil::setColor(0);
-        std::cerr << str.toStdString();
-    }
+    void print(QString str);
 
-    static void print(QString str, unsigned int color) {
-        rlutil::setColor(color);
-        std::cerr << str.toStdString();
-    }
+    void print(QString str, unsigned int color);
 
-    static void print(QString str, int x, int y) {
-        rlutil::setColor(BLACK);
-        rlutil::locate(x, y);
-        std::cerr<<str.toStdString();
-    }
+    void print(QString str, int x, int y);
 
+    void print(QString str, int x, int y, int color);
 
-    static void print(QString str, int x, int y, int color) {
-        rlutil::setColor(color);
-        rlutil::locate(x, y);
-        std::cerr<<str.toStdString();
-    }
+    QString getPassword();
 
-    static QString getPassword() {
-        char x;
-        QString password;
-        while (x = getch()) {
-            if (x == '\n') return password;
+    void locateCenter(int length, int y);
 
-            password += QString(x);
-            print("\b* ");
-        }
-    }
+    void printCenter(QString str, int y, int color);
 
-    static void locateCenter(int length, int y) {
-        int x = (getCols() - length) / 2;
-        rlutil::locate(x, y);
-    }
+    void hideCursor();
 
-    static void printCenter(QString str, int y, int color) {
-        int x = (getCols() - str.length()) / 2;
+    void showCursor();
 
-        rlutil::setColor(color);
-        rlutil::locate(x, y);
-        std::cerr<<str.toStdString();
-    }
+    void locateCursor(int x, int y);
 
-    static void hideCursor() {
-        rlutil::hidecursor();
-    }
+    void waitKey();
 
-    static void showCursor() {
-        rlutil::showcursor();
-    }
+    void cls();
 
-    static void locateCursor(int x, int y) {
-        rlutil::locate(x, y);
-    }
+    void wait(unsigned int ms);
 
-    static void waitKey() {
-        rlutil::anykey();
-    }
+    char nb_getch();
 
-    static void cls() {
-        rlutil::cls();
-    }
+    void warn(QString text);
 
-    static void wait(unsigned int ms) {
-        rlutil::msleep(ms);
-    }
-
-    static char nb_getch() {
-        return rlutil::nb_getch();
-    }
-
-    static void warn(QString text) {
-        cls();
-        printCenter(text, 10, RED);
-        printCenter("Press any key to continue", 13, BLACK);
-        waitKey();
-    }
-
-    static void info(QString text) {
-        cls();
-        printCenter(text, 10, GREEN);
-        printCenter("Press any key to continue", 13, BLACK);
-        waitKey();
-    }
+    void info(QString text);
 
 }
 

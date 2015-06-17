@@ -26,6 +26,7 @@ public:
     void send(QJsonObject json, qintptr id);
     bool addToRoom(int roomId, qintptr id);
     bool removeFromRoom(qintptr id);
+    int getRoom(qintptr id);
     void multicast(int roomId, QJsonObject data);
 
 signals:

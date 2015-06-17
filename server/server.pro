@@ -32,4 +32,6 @@ HEADERS += \
     src/model/Question.h \
     src/model/Referee.h \
     src/model/User.h \
-    src/service/ServerService.h
+    src/service/ServerService.h \
+    src/util/Console.h \
+    src/util/rlutil.h

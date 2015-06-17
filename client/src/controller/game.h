@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <QList>
+#include <qjsonarray.h>
 
 #include "../model/Player.h"
 #include "../model/Question.h"
@@ -31,6 +32,8 @@ private:
 
     //Helper method
     void printInfo();
+
+    void gameOverController(QJsonObject json);
 
 
 private slots:
